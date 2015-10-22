@@ -1,0 +1,14 @@
+<!DOCTYPE hmtl>
+<head>
+<META HTTP-EQUIV="refresh" CONTENT="2">
+<title>{{title}}</title>
+</head>
+
+<body>
+	<h1>Welcome to Quimicas Datalink!</h1>
+	<p><em>Hola!</em> ,  <strong>whatever</strong> verdad! </p>
+	<h2> The date and time on the server is: {{ time }}. </h2>
+	<h2> The current ph Value is: {{ phValue }}. </h2>
+</body>
+</html>
+
