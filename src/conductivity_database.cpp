@@ -83,15 +83,19 @@ int main(int argc, const char *argv[])
 	// Initialiaze Conductivity Sensor
 	CONDUCTIVITY sensor("/sys/devices/ocp.2/helper.14/AIN4");
 
+	// read Conductivity and insert into database
+	conductivity = sensor.GetConductivity();
+	printf("%f\n", conductivity);
+	mysql_stmt_execute(stmt);
 
 	// Insert multiple records into the database with different data each time
-	for(int i = 0; i < 10; i++)
+	/*for(int i = 0; i < 1; i++)
 	{
 		conductivity = sensor.GetConductivity();
 		printf("%f\n", conductivity);
 		mysql_stmt_execute(stmt);
 		sleep(5);
-	}
+	}*/
 
 	// Close the conductivity sensor
 	sensor.Close();
@@ -99,7 +103,7 @@ int main(int argc, const char *argv[])
 	// Close the MySQL connection
 	mysql_close(con);
 
-	return 0;
+	return conductivity;
 
 }
 
