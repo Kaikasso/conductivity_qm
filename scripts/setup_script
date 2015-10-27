@@ -1,0 +1,9 @@
+#This script must be run at initial installation
+
+# Enable ADC ports
+echo cape-bone-iio > /sys/devices/bone_capemgr.*/slots
+
+
+
+
+

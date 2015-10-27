@@ -1,6 +1,16 @@
 <html>
 <head>
 <title> Quimicas Mundiales:: SOLID CON I :: Conductivdad </title>
+<style>
+.element {
+    float: left;
+    margin: 5px;
+    padding: 15px;
+    width: 300px;
+    height: 300px;
+    border: 1px solid black;
+} 
+</style>
 <META HTTP-EQUIV="refresh" CONTENT="2"> 
 <style type="text/css">
 	p { display: table-cell; }
@@ -54,13 +64,12 @@
 </head>
 <body>
 	<!-- Conductivity Display Code -->
-	<div style="width: 200px; margin: 0px auto;">
-		<div style="width: 200px; float: left;">
-			<p> Conductividad :</p>
-			<?php echo htmlspecialchars($output); ?>
+	<div class = "element">
+			<h2> Conductividad :</h2>
+			<h3><?php echo htmlspecialchars($output); ?></h3>
 	</div>
 	<!-- Buttons code -->
-	<div style="width: 200px; margin: 0px auto;">
+	<!-- <div style="width: 200px; margin: 0px auto;">
 		<div style="width: 100px; float: left;">
 			<p> LED #2:</p>
 			<button type="button" onclick="location.href='conductivity_main.php?led=2&onOff=1'">ON</button>
@@ -72,7 +81,7 @@
 			<button type="button" onclick="location.href='conductivity_main.php?led=3&onOff=1'">ON</button>
 			<button type="button" onclick="location.href='conductivity_main.php?led=3&onOff=0'">OFF</button>
 		</div>
-	</div>
+	</div> -->
 	<div id ="chart_div" style="width: 900px; height: 500px;"></div>
 	<div> <p> Todos los derechos reservados QM - 2016 </p> </div>
 </body>

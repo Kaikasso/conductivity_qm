@@ -6,14 +6,15 @@
 #include <unistd.h>
 
 /// Input voltage
-const float CONDUCTIVITY::Vdd = 1.8;
-
-///
-const int CONDUCTIVITY::maxSensorUs = 20000;
+// const float CONDUCTIVITY::MaxVdd = 1.8;  // Maximum input voltage into the ADC pin
+// const float CONDUCTIVITY::MinVDD = 0.36; // Minimun input voltage into the ADC pin --> Using 90 Ohm resistor,
+										 // Hence, 90*0.004 A = 0.36 V.///
+const int CONDUCTIVITY::maxSensorUs = 4995;
+const int CONDUCTIVITY::fourmaOffset = 360;	// 4ma, or sensor at 0 ppm is equal to 360 ADC pin read.
 
 /// Maximum and minimum values that can be measured
-const int CONDUCTIVITY::ConducSensorMin = 0;
-const int CONDUCTIVITY::ConducSensorMax = 4096;
+const int CONDUCTIVITY::ConducSensorMin = 360;
+const int CONDUCTIVITY::ConducSensorMax = 4096;  // This *should* be maximum value associated to a ADC pin...
 
 /// Handles a Conductivity sensor
 /// @param Hardware device to read conductivity from
@@ -41,9 +42,8 @@ float CONDUCTIVITY::GetConductivity()
 	int value = atoi(_buffer);
 
 	// Convert the measurement into a conductivity value
-	float voltage = ((float) value / (ConducSensorMax - ConducSensorMin + 1) * Vdd);
-	float conductivity =  ((float) value / ConducSensorMax * maxSensorUs);
-
+	float conductivity = (((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2);
+	
 	return conductivity;
 }
 
