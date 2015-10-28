@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <cmath>
 
 /// Input voltage
 // const float CONDUCTIVITY::MaxVdd = 1.8;  // Maximum input voltage into the ADC pin
@@ -42,9 +43,13 @@ float CONDUCTIVITY::GetConductivity()
 	int value = atoi(_buffer);
 
 	// Convert the measurement into a conductivity value
-	float conductivity = (((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2);
-	
-	return conductivity;
+	//float conductivity = (((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2);
+	float conductivity = floor(((((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2)*10)+0.5)/10;
+	//conductivity = floor(conductivity*10+0.5)/10;
+	//conductivity =  roundf(conductivity * 100) / 100; 
+	//printf("Conductivity: %f ", conductivity);
+
+	return (int)conductivity;
 }
 
 /// Close conductivity sensor

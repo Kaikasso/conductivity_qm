@@ -4,304 +4,327 @@
 <!--[if !IE]><!--> <html lang="en"> <!--<![endif]-->
 <!-- BEGIN HEAD -->
 <head>
-    <meta charset="UTF-8" />
-    <title>Quimicas Mundiales S.A | Solid Con I DataLink </title>
-     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-	<meta content="" name="description" />
-	<meta content="" name="author" />
-	<META HTTP-EQUIV="refresh" CONTENT="15"> 
-     <!--[if IE]>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <![endif]-->
-    <!-- GLOBAL STYLES -->
-    <link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.css" />
-    <link rel="stylesheet" href="assets/css/main.css" />
-    <link rel="stylesheet" href="assets/css/theme.css" />
-    <link rel="stylesheet" href="assets/css/MoneAdmin.css" />
-    <link rel="stylesheet" href="assets/plugins/Font-Awesome/css/font-awesome.css" />
-    <!--END GLOBAL STYLES -->
+<meta charset="UTF-8" />
+<title>Quimicas Mundiales S.A | Solid Con I DataLink </title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+<meta content="" name="description" />
+<meta content="" name="author" />
+<META HTTP-EQUIV="refresh" CONTENT="15"> 
+<!--[if IE]>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<![endif]-->
+<!-- GLOBAL STYLES -->
+<link rel="stylesheet" href="assets/plugins/bootstrap/css/bootstrap.css" />
+<link rel="stylesheet" href="assets/css/main.css" />
+<link rel="stylesheet" href="assets/css/theme.css" />
+<link rel="stylesheet" href="assets/css/MoneAdmin.css" />
+<link rel="stylesheet" href="assets/plugins/Font-Awesome/css/font-awesome.css" />
+<!--END GLOBAL STYLES -->
 
-    <!-- PAGE LEVEL STYLES -->
-    <link href="assets/css/layout2.css" rel="stylesheet" />
-    <link href="assets/css/jquery-ui.css" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/plugins/uniform/themes/default/css/uniform.default.css" />
-    <link rel="stylesheet" href="assets/plugins/inputlimiter/jquery.inputlimiter.1.0.css" />
-    <link href="assets/plugins/flot/examples/examples.css" rel="stylesheet" />
-    <link rel="stylesheet" href="assets/plugins/timeline/timeline.css" />
-    <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker-bs3.css" />
-    <link rel="stylesheet" href="assets/plugins/chosen/chosen.min.css" />
-    <link rel="stylesheet" href="assets/plugins/colorpicker/css/colorpicker.css" />
-    <link rel="stylesheet" href="assets/plugins/tagsinput/jquery.tagsinput.css" />
-    <link rel="stylesheet" href="assets/plugins/daterangepicker/daterangepicker-bs3.css" />
-    <link rel="stylesheet" href="assets/plugins/datepicker/css/datepicker.css" />
-    <link rel="stylesheet" href="assets/plugins/timepicker/css/bootstrap-timepicker.min.css" />
-    <link rel="stylesheet" href="assets/plugins/switch/static/stylesheets/bootstrap-switch.css" />
-    <!-- END PAGE LEVEL  STYLES -->
-     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
-    <![endif]-->
-    <?php
-	$output = shell_exec( "/www/cgi-bin/condMeasure" );
-		
-	if(isset($_GET['led']) && isset($_GET['onOff']))
-	{
-		$led = $_GET['led'];
-		$onOff = $_GET['onOff'];
-		
-		
-	}
+<!-- PAGE LEVEL STYLES -->
+<link href="assets/css/layout2.css" rel="stylesheet" />
+<link href="assets/css/jquery-ui.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/plugins/uniform/themes/default/css/uniform.default.css" />
+<link rel="stylesheet" href="assets/plugins/inputlimiter/jquery.inputlimiter.1.0.css" />
+<link href="assets/plugins/flot/examples/examples.css" rel="stylesheet" />
+<link rel="stylesheet" href="assets/plugins/timeline/timeline.css" />
+<link rel="stylesheet" href="assets/plugins/chosen/chosen.min.css" />
+<link rel="stylesheet" href="assets/plugins/tagsinput/jquery.tagsinput.css" />
+<link rel="stylesheet" href="assets/plugins/datepicker/css/datepicker.css" />
 
+<!-- END PAGE LEVEL  STYLES -->
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+<![endif]-->
+
+<!-- Calls on C++ condMeasure program -->
+<?php
+    $output = shell_exec( "/www/cgi-bin/condMeasure" );
+
+    if(isset($_GET['led']) && isset($_GET['onOff']))
+    {
+    $led = $_GET['led'];
+    $onOff = $_GET['onOff'];
+}
 ?>
+
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script type="text/javascript">
-	google.load("visualization", "1", {packages:["corechart"]});
-	google.setOnLoadCallback(drawChart);
-	function drawChart() {
-		var data = google.visualization.arrayToDataTable([
-			   ['Time', 'Conductivity'],
-			   <?php
-				$con = mysqli_connect("localhost","bone","bone","TempDB");
-				
-				$query = "SELECT * FROM ConducMeasure";
-				$result = mysqli_query($con,$query);
-				
-				mysqli_close($con);
-			
-				while($row = mysqli_fetch_array($result))
-				{
-					$time = $row['MeasureTime'];
-					$conductivity = $row['Conductivity'];
-					echo "['$time', $conductivity],";
-				}
-			   ?>
-			]);
+    google.load("visualization", "1", {packages:["corechart"]});
+    google.setOnLoadCallback(drawChart);
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+        ['Time', 'Conductivity'],
+        <?php
+            $con = mysqli_connect("localhost","bone","bone","TempDB");
 
-		var options = {
-			title: 'Conductividad Medida',
-			vAxis: { title: "Partes por Millon TSD" }
-		};
+            $query = "SELECT * FROM ConducMeasure";
+            $result = mysqli_query($con,$query);
 
-		var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
-		chart.draw(data,options);
-	}
+            mysqli_close($con);
+
+            while($row = mysqli_fetch_array($result))
+            {
+                $time = $row['MeasureTime'];
+                $conductivity = $row['Conductivity'];
+                echo "['$time', $conductivity],";                   
+            }
+        ?>
+        ]);
+
+        var options = {
+            title: 'Conductividad Medida',
+            vAxis: { title: "Partes por Millon TSD" }
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        chart.draw(data,options);
+    }
 </script>
 </head>
-    <!-- END HEAD -->
+<!-- END HEAD -->
 
-    <!-- BEGIN BODY -->
+<!-- BEGIN BODY -->
 <body class="padTop53 " >
 
-    <!-- MAIN WRAPPER -->
-    <div id="wrap" >        
-        <!-- HEADER SECTION -->
-        <div id="top">
-            <nav class="navbar navbar-inverse navbar-fixed-top " style="padding-top: 5px; padding-bottom: 5px;">
-               
-                <a data-original-title="Show/Hide Menu" data-placement="bottom" data-tooltip="tooltip" class="accordion-toggle btn btn-primary btn-sm visible-xs" data-toggle="collapse" href="#menu" id="menu-toggle">
-                    
-                </a>
-                <!-- LOGO SECTION -->
-                <header class="navbar-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                           
-                    <a href="www.quimusa.com" class="navbar-brand">
-                    <img src="assets/img/QM_logo_oficial_wiki.png" align="middle" alt="logo quimusa" />
-                        </a>                     
-                </header>
-                <!-- END LOGO SECTION -->      
-                &nbsp;&nbsp;&nbsp;&nbsp; <h1> QM DATALINK CENTER </h1>                    
-            </nav>
-        </div>
-        <!-- END HEADER SECTION -->
+<!-- MAIN WRAPPER -->
+<div id="wrap" >       
+    <!-- HEADER SECTION -->
+    <div id="top">
+        <nav class="navbar navbar-inverse navbar-fixed-top " style="padding-top: 5px; padding-bottom: 5px;">
+            <a data-original-title="Show/Hide Menu" data-placement="bottom" data-tooltip="tooltip" class="accordion-toggle btn btn-primary btn-sm visible-xs" data-toggle="collapse" href="#menu" id="menu-toggle">
+            </a>
+            
+            <!-- LOGO SECTION -->
+            <header class="navbar-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <a href="www.quimusa.com" class="navbar-brand">
+                <img src="assets/img/QM_logo_oficial_wiki.png" align="middle" alt="logo quimusa" />
+                </a>                     
+            </header>
+            <!-- END LOGO SECTION -->      
+            &nbsp;&nbsp;&nbsp;&nbsp; <h1> QM DATALINK CENTER </h1>                    
+        </nav>
+    </div>
+    <!-- END HEADER SECTION -->
 
-        <!-- MENU SECTION -->
-       <div id="left" >
-             <ul id="menu" class="collapse">                
-                <li class="panel active">
-                    <a href="index.html" >
-                         MENU                       
-                    </a>                   
-                </li>                                           
-                <li><a href="gallery.html"><i class="icon-file-text"></i> Generar Reporte </a></li>
-                <li><a href="tables.html"><i class="icon-reorder"></i> Procedimiento Aplicacion </a></li>
-                <li><a href="maps.html"><i class="icon-star"></i> Ecofrut C </a></li>
-                   <li><a href="maps.html"><i class="icon-share-alt"></i> www.quimusa.com </a></li>
-                <li><a href="grid.html"><i class="icon-signin"></i> Contacto </a></li>               
-            </ul>
-        </div>
-        <!--END MENU SECTION -->
+    <!-- MENU SECTION -->
+    <div id="left" >
+        <ul id="menu" class="collapse">                
+            <li class="panel active">
+            <a href="index.html" > MENU </a>                   
+            </li>                                           
+            <li><a href="gallery.html"><i class="icon-file-text"></i> Generar Reporte </a></li>
+            <li><a href="tables.html"><i class="icon-reorder"></i> Procedimiento Aplicacion </a></li>
+            <li><a href="maps.html"><i class="icon-star"></i> Ecofrut C </a></li>
+            <li><a href="maps.html"><i class="icon-share-alt"></i> www.quimusa.com </a></li>
+            <li><a href="grid.html"><i class="icon-signin"></i> Contacto </a></li>               
+        </ul>
+    </div>
+    <!--END MENU SECTION -->
 
-        <!--PAGE CONTENT -->
-        <div id="content">
-
-            <div class="inner" style="min-height: 700px;">
-                
-                <div class="row">
-                    <div class="col-lg-12">
+    <!--PAGE CONTENT -->
+    <div id="content">
+        <div class="inner" style="min-height: 700px;">
+            <div class="row">
+                <div class="col-lg-12">
                     </br> &nbsp;&nbsp;&nbsp;&nbsp;
                     <img src="assets/img/titulo_solid_con_I.png" alt="logo solid con" />
-                                                </a> 
-
-                    </div>
                 </div>
-                <hr />
-                  
+            </div>
+            <hr />
             <!-- Real time Seccions-->
-                 <div class="row">
-                    
-                    <div class="col-lg-4">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading">
-                                PPM Ecofrut TIEMPO REAL
-                            </div>
-                            <div class="panel-body">
-                               <h3><?php echo htmlspecialchars($output); ?> ppm</h3>                             
-                               <h4> *Total Solidos Disueltos </h4>
-                            </div>
-                            <div class="panel-footer">
-                                Linea 1 VISA
-                            </div>
-                        </div>   
-                    </div> <!--end col-lg-4 -->
-                    
-                    <div class="col-lg-7">               
-                            <div class="panel panel-primary">
-                                <div class="panel-heading">
-                                    Enviar Datos / Generar Reporte
-                                </div>
-                                <div class="panel-body">
-                                 
-                                 <!-- BEGIN DATE RANGE PICKER -->
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <div class="box">
-                                    <header>
-                                        <div class="icons">
-                                            <i class="icon-calendar"></i>
-                                        </div>
-                                        <h5>Calendario Reporte/Grafico</h5>
-
-                                        <div class="toolbar">
-                                            <ul class="nav pull-right">
-                                                <li>
-                                                    <a href="#dateRangePickerBlock" data-toggle="collapse"
-                                                       class="accordion-toggle minimize-box">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading"> PPM Ecofrut TIEMPO REAL</div>
+                        <div class="panel-body">
+                            <h3><?php echo htmlspecialchars($output); ?> ppm</h3>                             
+                            <h4> *Total Solidos Disueltos </h4>
+                        </div>
+                        <div class="panel-footer"> Linea 1 VISA</div>
+                    </div>   
+                </div> <!--end col-lg-4 -->
+                <div class="col-lg-7">               
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">Enviar Datos / Generar Reporte</div>
+                        <div class="panel-body">
+                            <!-- BEGIN DATE PICKER -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="box">
+                                        <header>
+                                            <div class="icons">
+                                                <i class="icon-calendar"></i>
+                                            </div>
+                                            <h5>Escoje Fechas</h5>
+                                            <div class="toolbar">
+                                                <ul class="nav pull-right">
+                                                    <li>
+                                                        <a href="#datePickerBlock" data-toggle="collapse" class="accordion-toggle minimize-box">
                                                         <i class="icon-chevron-up"></i>
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" class="close-box">
+                                                        </a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#" class="close-box">
                                                         <i class="icon-remove"></i>
                                                     </a>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                    </header>
-
-
-                                    <div id="dateRangePickerBlock" class="body collapse in">
-                                        <form class="form-horizontal">
-                                            <div class="form-group">
-                                                <label class="control-label col-lg-5" for="reservation">Seleccionar Fechas</label>
-
-                                                <div class="col-lg-5">
-                                                    <div class="input-group">
-                                                        <span class="input-group-addon"><i class="icon-calendar"></i></span>
-                                                        <input type="text" name="reservation" id="reservation" class="form-control" />
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </header>
+                                        <div id="datePickerBlock" class="body collapse in">
+                                            <form class="form-horizontal">
+                                                <div class="form-group">
+                                                    <div class="body">
+                                                        <p>Attached to other element then field and using events to work with the date values.</p>
+                                                        <div class="alert alert-error" id="alert" style="display: none;">
+                                                            <strong>Oh snap!</strong>                                            
+                                                        </div>
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th><a href=data-date-format class="btn btn-default" id="dp4" data-date-format="yyyy-mm-dd"
+                                                                    data-date="2015-10-20">Fecha Inicio</a></th>
+                                                                    <th><a href="#" class="btn btn-default" id="dp5" data-date-format="yyyy-mm-dd"
+                                                                    data-date="2015-10-25">Fecha Final</a></th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td id="startDate">2015-10-20</td>
+                                                                    <td id="endDate">2015-10-25</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
-                                            </div>                 
-                                        </form>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            <!-- END DATE PICKER -->
+                            <p><a href="#" class="btn btn-primary btn-round">Generar reporte</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-round">Graficar</a></p>
                         </div>
-                        <!--END DATE RANGE PICKER -->
 
-                                    <p><a href="#" class="btn btn-primary btn-round">Generar reporte</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-round">Graficar</a></p>
-                                </div>
-                                <div class="panel-footer">
-                                    Reporte en Formato PDF
-                                </div>
-                            </div>             
-                    </div> <!--end col-lg-7 --> 
+                        <div class="panel-footer">Reporte en Formato PDF</div>
+                    </div>             
+                </div> <!--end col-lg-7 --> 
+            </div> <!-- end row -->
 
-                </div> <!-- end row -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">GRAFICO ULTIMA HORA APLICACION</div>
+                        <div class="demo-container">
+                            <div id ="chart_div" class="demo-placeholder"></div>
+                            <!--<div id ="chart_div" style="width: 900px; height: 500px;"></div> -->
+                            <!-- <div id="placeholderRT" class="demo-placeholder"></div> -->
+                        </div>                                      
+                    </div>            
+                </div> <!--end col-lg-12-->                     
+            </div> <!-- end row -->
 
-                 <div class="row">
-                     <div class="col-lg-12">
-                        <div class="panel panel-default">
-                           <div class="panel-heading">
-                                GRAFICO ULTIMA HORA APLICACION
-                             </div>
+            <!--- seccion pruebas -->
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">TABLA DE DATOS</div>
+                        <div>
+                            <form action="getdates.php" method="post">     
+                                Value1: <input type="text" name="field1-name" />
+                                Value2: <input type="text" name="field2-name" />
+                                <input type="Submit" />
+                            </form>
+                            <table border="0" cellspacing="2" cellpadding="2">
+                                <?php 
+                                    $con = mysqli_connect("localhost","bone","bone","TempDB");
+                                    $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1' AND '$field2'";
+                                    // $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59'";
+                                    $result = mysqli_query($con,$query);
+                                    //$num=mysql_numrows($result);
+                                    mysqli_close($con);                   
+                                    // While loop begin
+                                    while($row = mysqli_fetch_array($result))
+                                    {
+                                        $time = $row['MeasureTime'];
+                                        $conductivity = $row['Conductivity'];
+                                        //echo "['$time', $conductivity],";  
+                                    }
+                                ?>
+                                <tr>
+                                    <td>
+                                        <font face="Arial, Helvetica, sans-serif"><?php echo $time; ?></font>
+                                    </td>
+                                    <td>
+                                        <font face="Arial, Helvetica, sans-serif"><?php echo $conductivity; ?></font>
+                                    </td>
+                                </tr>  
+                            </table>
+                        </div>                                      
+                    </div>            
+                </div> <!--end col-lg-12-->                     
+            </div> <!-- end row -->
 
-                             <div class="demo-container">
-                             	<div id ="chart_div" class="demo-placeholder"></div>
-                                <!--<div id ="chart_div" style="width: 900px; height: 500px;"></div> -->
-                                <!-- <div id="placeholderRT" class="demo-placeholder"></div> -->
-                             </div>                                      
-                        </div>            
-                    </div> <!--end col-lg-12-->                     
-                </div> <!-- end row -->
-
-            </div>
-        </div>
-        <!--END PAGE CONTENT -->
-
-         <!-- RIGHT STRIP  SECTION -->
-       <!-- <div id="right">
-          RIGHT PANEL EMPTY!!! 
-        </div>-->
-         <!-- END RIGHT STRIP  SECTION -->
-   
+        </div>  <!--END inner -->
     </div>
-    <!--END MAIN WRAPPER -->
+    <!--END PAGE CONTENT -->
 
-    <!-- FOOTER -->
-    <div id="footer">
-        <p>&copy;  Quimicas Mundiales S.A  &nbsp;2016 &nbsp;</p>
-    </div>
-    <!--END FOOTER -->
+    <!-- RIGHT STRIP  SECTION -->
+    <!-- <div id="right">
+        RIGHT PANEL EMPTY!!! 
+    </div>-->
+    <!-- END RIGHT STRIP  SECTION -->
+
+</div>
+<!--END MAIN WRAPPER -->
+
+<!-- FOOTER -->
+<div id="footer">
+    <p>&copy;  Quimicas Mundiales S.A  &nbsp;2016 &nbsp;</p>
+</div>
+<!--END FOOTER -->
 
 
-    <!-- GLOBAL SCRIPTS -->
-    <script src="assets/plugins/jquery-2.0.3.min.js"></script>
-     <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <script src="assets/plugins/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-    <!-- END GLOBAL SCRIPTS -->
+<!-- GLOBAL SCRIPTS -->
+<script src="assets/plugins/jquery-2.0.3.min.js"></script>
+<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>
+<script src="assets/plugins/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+<!-- END GLOBAL SCRIPTS -->
 
-    <!-- PAGE LEVEL SCRIPTS -->
-    <script src="assets/plugins/flot/jquery.flot.js"></script>
-    <script src="assets/plugins/flot/jquery.flot.resize.js"></script>
-    <script src="assets/plugins/flot/jquery.flot.time.js"></script>
-     <script  src="assets/plugins/flot/jquery.flot.stack.js"></script>
-    <script src="assets/js/for_index.js"></script>
+<!-- PAGE LEVEL SCRIPTS -->
+
 <!-- new insertions !-->
-    <script src="assets/js/jquery-ui.min.js"></script>
-    <script src="assets/plugins/uniform/jquery.uniform.min.js"></script>
-    <script src="assets/plugins/inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
-    <script src="assets/plugins/chosen/chosen.jquery.min.js"></script>
-    <script src="assets/plugins/colorpicker/js/bootstrap-colorpicker.js"></script>
-    <script src="assets/plugins/tagsinput/jquery.tagsinput.min.js"></script>
-    <script src="assets/plugins/validVal/js/jquery.validVal.min.js"></script>
-    <script src="assets/plugins/daterangepicker/daterangepicker.js"></script>
-    <script src="assets/plugins/daterangepicker/moment.min.js"></script>
-    <script src="assets/plugins/datepicker/js/bootstrap-datepicker.js"></script>
-    <script src="assets/plugins/timepicker/js/bootstrap-timepicker.min.js"></script>
-    <script src="assets/plugins/switch/static/js/bootstrap-switch.min.js"></script>
-    <script src="assets/plugins/jquery.dualListbox-1.3/jquery.dualListBox-1.3.min.js"></script>
-    <script src="assets/plugins/autosize/jquery.autosize.min.js"></script>
-    <script src="assets/plugins/jasny/js/bootstrap-inputmask.js"></script>
-    <script src="assets/js/formsInit.js"></script>
-    <script>
-        $(function () { formInit(); });
-    </script>
-   
-    <!-- END PAGE LEVEL SCRIPTS -->
+<script src="assets/js/jquery-ui.min.js"></script>
+<script src="assets/plugins/uniform/jquery.uniform.min.js"></script>
+<script src="assets/plugins/inputlimiter/jquery.inputlimiter.1.3.1.min.js"></script>
+<script src="assets/plugins/chosen/chosen.jquery.min.js"></script>
+<script src="assets/plugins/colorpicker/js/bootstrap-colorpicker.js"></script>
+<script src="assets/plugins/tagsinput/jquery.tagsinput.min.js"></script>
+<script src="assets/plugins/validVal/js/jquery.validVal.min.js"></script>
+<script src="assets/plugins/daterangepicker/daterangepicker.js"></script>
+<script src="assets/plugins/daterangepicker/moment.min.js"></script>
+<script src="assets/plugins/datepicker/js/bootstrap-datepicker.js"></script>
+<script src="assets/plugins/timepicker/js/bootstrap-timepicker.min.js"></script>
+<script src="assets/plugins/switch/static/js/bootstrap-switch.min.js"></script>
+<script src="assets/plugins/jquery.dualListbox-1.3/jquery.dualListBox-1.3.min.js"></script>
+<script src="assets/plugins/autosize/jquery.autosize.min.js"></script>
+<script src="assets/plugins/jasny/js/bootstrap-inputmask.js"></script>
+<script src="assets/js/formsInit.js"></script>
+<script>
+    $(function () { formInit(); });
+</script>
+<!-- Previous-->    
+<script src="assets/plugins/flot/jquery.flot.js"></script>
+<script src="assets/plugins/flot/jquery.flot.resize.js"></script>
+<script src="assets/plugins/flot/jquery.flot.time.js"></script>
+<script  src="assets/plugins/flot/jquery.flot.stack.js"></script>
+<script src="assets/js/for_index.js"></script>
+<!-- END PAGE LEVEL SCRIPTS -->
 
 </body>
 
-    <!-- END BODY -->
+<!-- END BODY -->
 </html>
