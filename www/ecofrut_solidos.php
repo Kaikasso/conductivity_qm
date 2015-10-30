@@ -9,7 +9,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <meta content="" name="description" />
 <meta content="" name="author" />
-<META HTTP-EQUIV="refresh" CONTENT="15"> 
+<!-- <META HTTP-EQUIV="refresh" CONTENT="15"> -->
 <!--[if IE]>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <![endif]-->
@@ -42,12 +42,6 @@
 <!-- Calls on C++ condMeasure program -->
 <?php
     $output = shell_exec( "/www/cgi-bin/condMeasure" );
-
-    if(isset($_GET['led']) && isset($_GET['onOff']))
-    {
-    $led = $_GET['led'];
-    $onOff = $_GET['onOff'];
-}
 ?>
 
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -57,7 +51,7 @@
     function drawChart() {
         var data = google.visualization.arrayToDataTable([
         ['Time', 'Conductivity'],
-        <?php
+<?php
             $con = mysqli_connect("localhost","bone","bone","TempDB");
 
             $query = "SELECT * FROM ConducMeasure";
@@ -71,7 +65,7 @@
                 $conductivity = $row['Conductivity'];
                 echo "['$time', $conductivity],";                   
             }
-        ?>
+?>
         ]);
 
         var options = {
@@ -152,63 +146,93 @@
                         <div class="panel-body">
                             <!-- BEGIN DATE PICKER -->
                             <div class="row">
-                                <div class="col-lg-12">
-                                    <div class="box">
-                                        <header>
-                                            <div class="icons">
-                                                <i class="icon-calendar"></i>
-                                            </div>
-                                            <h5>Escoje Fechas</h5>
-                                            <div class="toolbar">
-                                                <ul class="nav pull-right">
-                                                    <li>
-                                                        <a href="#datePickerBlock" data-toggle="collapse" class="accordion-toggle minimize-box">
-                                                        <i class="icon-chevron-up"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" class="close-box">
-                                                        <i class="icon-remove"></i>
-                                                    </a>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </header>
-                                        <div id="datePickerBlock" class="body collapse in">
-                                            <form class="form-horizontal">
-                                                <div class="form-group">
-                                                    <div class="body">
-                                                        <p>Attached to other element then field and using events to work with the date values.</p>
-                                                        <div class="alert alert-error" id="alert" style="display: none;">
-                                                            <strong>Oh snap!</strong>                                            
-                                                        </div>
-                                                        <table class="table">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th><a href=data-date-format class="btn btn-default" id="dp4" data-date-format="yyyy-mm-dd"
-                                                                    data-date="2015-10-20">Fecha Inicio</a></th>
-                                                                    <th><a href="#" class="btn btn-default" id="dp5" data-date-format="yyyy-mm-dd"
-                                                                    data-date="2015-10-25">Fecha Final</a></th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td id="startDate">2015-10-20</td>
-                                                                    <td id="endDate">2015-10-25</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </div>
+                               <div class="col-lg-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">Escoja las fechas:</div>
+                                        <div>
+                                            <form action="" method="post">     
+                                                Fecha Inicio: <input type="date" name="field1name" value="2015-10-23"/></br>
+                                                &nbsp;Fecha Final: <input type="date" name="field2name" value="2015-10-24"/></br></br>
+                                                <input class="btn btn-primary btn-round" type="Submit" value="Generar PDF" name="GenerarPDFButton" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input class="btn btn-primary btn-round" type="Submit" value="Graficar" name="GraficarButton" /> </br>
+                                            </form>  
+                                        </div>                                      
+                                    </div>            
+                                </div> <!--end col-lg-12-->   
                             </div>
-                            <!-- END DATE PICKER -->
-                            <p><a href="#" class="btn btn-primary btn-round">Generar reporte</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" class="btn btn-primary btn-round">Graficar</a></p>
-                        </div>
+                            <!-- END DATE PICKER -->  
 
+                            <div class="table-responsive">
+                                <table class="table table-striped">
+<?php 
+                                if(isset($_POST['GenerarPDFButton'])){ //check if form was submitted
+                                    $field1 = $_POST['field1name']; //get input text 
+                                    $field2 = $_POST['field2name']; //get input text 
+                                    $count = 0;
+                                    // --- MySql and Database Access ---
+                                    $con = mysqli_connect("localhost","bone","bone","TempDB");
+                                    $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1 00:00:00' AND '$field2 23:59:59'";
+                                    //echo "$query";
+                                    // $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59'";
+                                    $result = mysqli_query($con,$query);
+                                    //$num=mysql_numrows($result);
+                                    mysqli_close($con); 
+                                    //  --- PDF document creation ---
+                                    require('fpdf.php');
+                                    $pdf = new FPDF();
+                                    $pdf->AddPage();
+                                    $pdf->Image('assets/img/QM_logo_oficial_wiki.png',10,6,30);
+                                    $pdf->Image('assets/img/Ecofrut_logo_oficial_web.png',70,15,30);
+                                    $pdf->Ln(20);
+                                    $pdf->SetFont('Arial','B',14);
+                                    $pdf->Cell(50,10,'FECHA',1); 
+                                    $pdf->Cell(38,10,'PPM Ecofrut',1); 
+                                    $pdf->Cell(50,10,'FECHA',1); 
+                                    $pdf->Cell(38,10,'PPM Ecofrut',1); 
+                                    $pdf->Ln();
+                                    // While loop begin
+                                    while($row = mysqli_fetch_array($result))
+                                    {
+                                        $time = $row['MeasureTime'];
+                                        $conductivity = $row['Conductivity'];
+                                        if(0) {
+                                        echo "<tr> 
+                                                <td>
+                                                    <font face=\"Arial, Helvetica, sans-serif\">";
+                                            echo "$time"; 
+                                            echo "</font> 
+                                                </td>
+                                                <td>
+                                                    <font face=\"Arial, Helvetica, sans-serif\">";
+                                            echo "$conductivity"; 
+                                            echo "</font>
+                                                </td>
+                                                </tr>";
+                                        }
+                                        else { 
+                                               $pdf->Cell(50,10, $time ,1);
+                                               $pdf->Cell(38,10, $conductivity ,1);
+                                               $temp = $count%2;
+                                               if ($temp != 0) {
+                                                   $pdf->Ln();
+                                               }
+                                               $count++;  
+                                        }                       
+                                    }
+
+                                    ob_end_clean();
+                                    $pdf->Ln(20);
+                                    $pdf->Cell(88,10, 'Quimicas Mundiales S.A   2016',1);                                  
+                                    $pdf->Output('PPM_mediciones_Ecofrut.pdf', F);
+                                    ob_end_clean();
+                                    echo "</br>";
+                                    echo "<a href=PPM_mediciones_Ecofrut.pdf>Bajar Archivo</a>";
+                                }
+?>
+                                </table>
+                            </div> 
+
+                        </div>
                         <div class="panel-footer">Reporte en Formato PDF</div>
                     </div>             
                 </div> <!--end col-lg-7 --> 
@@ -231,42 +255,12 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">TABLA DE DATOS</div>
-                        <div>
-                            <form action="getdates.php" method="post">     
-                                Value1: <input type="text" name="field1-name" />
-                                Value2: <input type="text" name="field2-name" />
-                                <input type="Submit" />
-                            </form>
-                            <table border="0" cellspacing="2" cellpadding="2">
-                                <?php 
-                                    $con = mysqli_connect("localhost","bone","bone","TempDB");
-                                    $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1' AND '$field2'";
-                                    // $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59'";
-                                    $result = mysqli_query($con,$query);
-                                    //$num=mysql_numrows($result);
-                                    mysqli_close($con);                   
-                                    // While loop begin
-                                    while($row = mysqli_fetch_array($result))
-                                    {
-                                        $time = $row['MeasureTime'];
-                                        $conductivity = $row['Conductivity'];
-                                        //echo "['$time', $conductivity],";  
-                                    }
-                                ?>
-                                <tr>
-                                    <td>
-                                        <font face="Arial, Helvetica, sans-serif"><?php echo $time; ?></font>
-                                    </td>
-                                    <td>
-                                        <font face="Arial, Helvetica, sans-serif"><?php echo $conductivity; ?></font>
-                                    </td>
-                                </tr>  
-                            </table>
+                        <div class="panel-heading">INFORMACION</div>
+                        <!-- para pruebas -->
                         </div>                                      
                     </div>            
                 </div> <!--end col-lg-12-->                     
-            </div> <!-- end row -->
+            </div> <!--end row --> 
 
         </div>  <!--END inner -->
     </div>
