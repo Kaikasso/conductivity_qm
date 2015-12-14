@@ -1,0 +1,10 @@
+# This "script" describes how to use lighttpd...
+
+# STOP LIGHTTPD
+/etc/init.d/lighttpd stop
+
+# START LIGHTTPD
+/etc/init.d/lighttpd start
+
+# RESTART LIGHTTPD
+/etc/init.d/lighttpd restart

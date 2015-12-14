@@ -9,8 +9,8 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport" />
 <meta content="" name="description" />
 <meta content="" name="author" />
-<!-- <META HTTP-EQUIV="refresh" CONTENT="15"> -->
-<!--[if IE]>
+<!--<META HTTP-EQUIV="refresh" CONTENT="60"> -->
+ <!--[if IE]>
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <![endif]-->
 <!-- GLOBAL STYLES -->
@@ -39,22 +39,45 @@
 <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
 <![endif]-->
 
-<!-- Calls on C++ condMeasure program -->
-<?php
-    $output = shell_exec( "/www/cgi-bin/condMeasure" );
-?>
-
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<!-- Script to update PPM variable -->
+<script>
+function loadval_ppm() {
+
+    var nIntervId; // variable to point setInterval
+    nIntervId = setInterval(getVal_ppm, 1000);
+ 
+    function getVal_ppm() {
+
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                document.getElementById("update_div").innerHTML = xmlhttp.responseText;
+            }
+        };
+        xmlhttp.open("GET", "output.php", true);
+        xmlhttp.send();
+    }
+    
+}
+</script>
 <script type="text/javascript">
     google.load("visualization", "1", {packages:["corechart"]});
     google.setOnLoadCallback(drawChart);
     function drawChart() {
         var data = google.visualization.arrayToDataTable([
-        ['Time', 'Conductivity'],
+        ['Tiempo', 'PPM'],
 <?php
             $con = mysqli_connect("localhost","bone","bone","TempDB");
+            if(isset($_POST['GraficarButton'])){                  //check if form was submitted
+                $field1 = $_POST['field1name']; //get input text 
+                $field2 = $_POST['field2name']; //get input text 
+                $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1 00:00:00' AND '$field2 23:59:59'";
 
-            $query = "SELECT * FROM ConducMeasure";
+            }
+            else {
+                $query = "SELECT * FROM ConducMeasure WHERE MeasureTime >= DATE_SUB(NOW(), interval 5 hour)";
+            }
             $result = mysqli_query($con,$query);
 
             mysqli_close($con);
@@ -69,7 +92,7 @@
         ]);
 
         var options = {
-            title: 'Conductividad Medida',
+            title: 'PPM (Partes por Millon) de Ecofrut Disueltos',
             vAxis: { title: "Partes por Millon TSD" }
         };
 
@@ -81,7 +104,7 @@
 <!-- END HEAD -->
 
 <!-- BEGIN BODY -->
-<body class="padTop53 " >
+<body class="padTop53" onload="loadval_ppm();" >
 
 <!-- MAIN WRAPPER -->
 <div id="wrap" >       
@@ -134,7 +157,8 @@
                     <div class="panel panel-primary">
                         <div class="panel-heading"> PPM Ecofrut TIEMPO REAL</div>
                         <div class="panel-body">
-                            <h3><?php echo htmlspecialchars($output); ?> ppm</h3>                             
+                           <h3><span id="update_div"></span></h3> 
+                            <!--<h3><?php //echo htmlspecialchars($output); ?> ppm</h3>-->                             
                             <h4> *Total Solidos Disueltos </h4>
                         </div>
                         <div class="panel-footer"> Linea 1 VISA</div>
@@ -151,8 +175,10 @@
                                         <div class="panel-heading">Escoja las fechas:</div>
                                         <div>
                                             <form action="" method="post">     
-                                                Fecha Inicio: <input type="date" name="field1name" value="2015-10-23"/></br>
-                                                &nbsp;Fecha Final: <input type="date" name="field2name" value="2015-10-24"/></br></br>
+                                              <!--  Fecha Inicio: <input type="date" name="field1name" value=""/></br>
+                                                &nbsp;Fecha Final: <input type="date" name="field2name" value=""/></br></br> -->
+                                                Fecha Inicio: <input type="date" name="field1name" value="2015-12-01"/></br>
+                                                &nbsp;Fecha Final: <input type="date" name="field2name" value="2015-12-02"/></br></br> 
                                                 <input class="btn btn-primary btn-round" type="Submit" value="Generar PDF" name="GenerarPDFButton" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <input class="btn btn-primary btn-round" type="Submit" value="Graficar" name="GraficarButton" /> </br>
                                             </form>  
@@ -221,8 +247,13 @@
                                     }
 
                                     ob_end_clean();
+                                    date_default_timezone_set('America/Costa_Rica');
+                                    $date = date('m/d/Y h:i:s a', time());                                    
                                     $pdf->Ln(20);
-                                    $pdf->Cell(88,10, 'Quimicas Mundiales S.A   2016',1);                                  
+                                    $pdf->Cell(60,10, 'Archivo Autogenerado:',1); 
+                                    $pdf->Cell(65,10, $date,1); 
+                                    $pdf->Ln();
+                                    $pdf->Cell(125,10, 'Quimicas Mundiales S.A  -  2016',1);                                  
                                     $pdf->Output('PPM_mediciones_Ecofrut.pdf', F);
                                     ob_end_clean();
                                     echo "</br>";
@@ -241,7 +272,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">GRAFICO ULTIMA HORA APLICACION</div>
+                        <div class="panel-heading">GRAFICO ULTIMAS 5 HORAS DE APLICACION</div>
                         <div class="demo-container">
                             <div id ="chart_div" class="demo-placeholder"></div>
                             <!--<div id ="chart_div" style="width: 900px; height: 500px;"></div> -->

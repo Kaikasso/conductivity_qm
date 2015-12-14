@@ -1,5 +1,4 @@
 #include "read_conductivity.h"
-
 #include <stdlib.h>
 #include <fcntl.h>
 #include <stdio.h>
@@ -43,12 +42,7 @@ float CONDUCTIVITY::GetConductivity()
 	int value = atoi(_buffer);
 
 	// Convert the measurement into a conductivity value
-	//float conductivity = (((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2);
 	float conductivity = floor(((((float) (value - fourmaOffset)/(ConducSensorMax-ConducSensorMin))*maxSensorUs)*(100/39.2)*10)+0.5)/10;
-	//conductivity = floor(conductivity*10+0.5)/10;
-	//conductivity =  roundf(conductivity * 100) / 100; 
-	//printf("Conductivity: %f ", conductivity);
-
 	return (int)conductivity;
 }
 
