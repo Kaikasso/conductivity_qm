@@ -177,9 +177,10 @@ function loadval_ppm() {
                                             <form action="" method="post">     
                                               <!--  Fecha Inicio: <input type="date" name="field1name" value=""/></br>
                                                 &nbsp;Fecha Final: <input type="date" name="field2name" value=""/></br></br> -->
-                                                Fecha Inicio: <input type="date" name="field1name" value="2015-12-01"/></br>
-                                                &nbsp;Fecha Final: <input type="date" name="field2name" value="2015-12-02"/></br></br> 
+                                                &nbsp;Fecha Inicio: <input type="date" name="field1name" value="2015-12-01"/></br>
+                                                &nbsp;Fecha &nbsp;Final: <input type="date" name="field2name" value="2015-12-02"/></br></br> 
                                                 <input class="btn btn-primary btn-round" type="Submit" value="Generar PDF" name="GenerarPDFButton" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                <input class="btn btn-primary btn-round" type="Submit" value="Generar Excel" name="GenerarCSVButton" /> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                                 <input class="btn btn-primary btn-round" type="Submit" value="Graficar" name="GraficarButton" /> </br>
                                             </form>  
                                         </div>                                      
@@ -198,7 +199,7 @@ function loadval_ppm() {
                                     // --- MySql and Database Access ---
                                     $con = mysqli_connect("localhost","bone","bone","TempDB");
                                     $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1 00:00:00' AND '$field2 23:59:59'";
-                                    //echo "$query";
+                                   
                                     // $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59'";
                                     $result = mysqli_query($con,$query);
                                     //$num=mysql_numrows($result);
@@ -257,14 +258,76 @@ function loadval_ppm() {
                                     $pdf->Output('PPM_mediciones_Ecofrut.pdf', F);
                                     ob_end_clean();
                                     echo "</br>";
-                                    echo "<a href=PPM_mediciones_Ecofrut.pdf>Bajar Archivo</a>";
-                                }
+                                    echo "<a href=PPM_mediciones_Ecofrut.pdf>Bajar Archivo PDF</a>";
+                                } elseif(isset($_POST['GenerarCSVButton'])){ //check if form was submitted
+                                    $field1 = $_POST['field1name']; //get input text 
+                                    $field2 = $_POST['field2name']; //get input text 
+                                    $count = 0;
+                                    // --- MySql and Database Access ---
+                                    $con = mysqli_connect("localhost","bone","bone","TempDB");
+                                    //$query1 = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA='TempDB' AND TABLE_NAME='ConducMeasure'";
+                                    $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '$field1 00:00:00' AND '$field2 23:59:59'";
+                                    
+                                    // $query = "SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59'";
+                                    //$result1 = mysqli_query($con,$query1);
+                                    $result = mysqli_query($con,$query);
+
+                                    //$num=mysql_numrows($result);
+                                    mysqli_close($con); 
+                                    //  --- PDF document creation ---                                
+                                    $file = fopen("PPM_mediciones_Ecofrut.csv","w");
+                                    
+                                   // $pdf->Image('assets/img/QM_logo_oficial_wiki.png',10,6,30);
+                                   // $pdf->Image('assets/img/Ecofrut_logo_oficial_web.png',70,15,30);
+                                                                
+                                    // While loop begin
+                                    // while($row = mysqli_fetch_array($result1))
+                                    // {
+                                    //     $header[] = $row[0];                                   
+                                    // }
+                                    //header('Content-type: application/csv');
+                                    //header('Content-Disposition: attachment; filename='.$filename);
+                                    //fputcsv($file, $header);
+
+                                    // While loop begin
+                                    //$num_column = count($header);
+                                    $list = array
+                                        ("FECHA", "PPM Ecofrut");
+                                    fputcsv($file, $list);
+
+                                    while($row = mysqli_fetch_array($result))
+                                    {
+                                        //fputcsv($file, $row);
+                                        $time = $row['MeasureTime'];
+                                        $conductivity = $row['Conductivity'];
+                                        $list = array
+                                        ($time, $conductivity);
+                                        fputcsv($file, $list);
+                                    }
+
+                                    $list = array
+                                        (" ", " ");
+                                    fputcsv($file, $list);
+                                    date_default_timezone_set('America/Costa_Rica');
+                                    $date = date('m/d/Y h:i:s a', time());      
+                                    $list = array
+                                        ("Archivo Autogenerado:", $date);
+                                    fputcsv($file, $list);
+                                    $list = array
+                                        ("Quimicas Mundiales S.A", "2016");
+                                        fputcsv($file, $list);
+                                    fclose($file);
+                                    ob_end_clean();
+                                    echo "</br>";
+                                    echo "<a href=PPM_mediciones_Ecofrut.csv>Bajar Archivo Excel</a>";
+                                   
+                                } //end elseif
 ?>
                                 </table>
                             </div> 
 
                         </div>
-                        <div class="panel-footer">Reporte en Formato PDF</div>
+                        <div class="panel-footer">Reporte en Formato PDF/CSV</div>
                     </div>             
                 </div> <!--end col-lg-7 --> 
             </div> <!-- end row -->

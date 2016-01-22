@@ -89,13 +89,14 @@ int main(int argc, const char *argv[])
 	mysql_stmt_execute(stmt);
 
 	// Insert multiple records into the database with different data each time
-	/*for(int i = 0; i < 1; i++)
+	//for(int i = 0; i < 1; i++)
+	for(;;)
 	{
 		conductivity = sensor.GetConductivity();
 		printf("%f\n", conductivity);
 		mysql_stmt_execute(stmt);
 		sleep(5);
-	}*/
+	}
 
 	// Close the conductivity sensor
 	sensor.Close();

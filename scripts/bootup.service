@@ -1,0 +1,9 @@
+[Unit]
+Description=Setting Bootup Scripts and Others
+
+[Service]
+ExecStart = /usr/bin/bootup_script.sh
+
+[Install]
+WantedBy=multi-user.target
+

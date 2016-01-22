@@ -1,0 +1,14 @@
+# Find out total number of MB in a table
+SELECT table_name AS "Table", round(((data_length + index_length) / 1024 / 1024), 2) "Size in MB" FROM information_schema.TABLES WHERE table_schema = "TempDB" AND table_name = "ConducMeasure" ;
+
+# Select all data from last X hours
+SELECT * FROM ConducMeasure WHERE MeasureTime >= DATE_SUB(NOW(), interval 10 hour);
+
+# Select a time interval 
+SELECT * FROM ConducMeasure WHERE MeasureTime BETWEEN '2015-10-23 00:00:00' AND '2015-10-23 23:59:59' ;
+
+# Show Available Tables
+Show tables;
+
+# Delete entries X months old or greater
+DELETE FROM ConducMeasure  WHERE MeasureTime < UNIX_TIMESTAMP(DATE_SUB(NOW(), INTERVAL 180 DAY));
